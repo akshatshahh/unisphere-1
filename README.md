@@ -6,12 +6,15 @@ This is mobile application for the project's frontend.
 
 To build and run the app on real devices:
 
-1. **Environment variables**  
+1. **Log in to EAS**  
+   Run `npx eas login` and sign in with your Expo account. Required before any `eas build` or `eas submit`.
+
+2. **Environment variables**  
    Copy `.sample.env` to `.env` and fill in your values for local development. For EAS builds (Expo Application Services), set the same variables as **EAS Secrets** in the [Expo dashboard](https://expo.dev) (Project → Secrets). Required keys:
    - All `EXPO_PUBLIC_APPWRITE_*` (endpoint, project ID, collection IDs, bucket, organizers team, function ID, etc.)
    - `EXPO_PUBLIC_STRIPE_PUBLISHABLE_KEY`
 
-2. **Build**  
+3. **Build**  
    From the project root:
    ```bash
    npm install
@@ -19,8 +22,10 @@ To build and run the app on real devices:
    ```
    Use `--profile preview` for internal testing. Install the generated APK (Android) or IPA (iOS) on devices.
 
-3. **Submit to stores (optional)**  
+4. **Submit to stores (optional)**  
    After a production build: `eas submit --platform all --profile production`.
+
+For a step-by-step checklist (login, secrets, build, install), see [DEPLOY.md](DEPLOY.md).
 
 ## Splash screen
 ![Splash_screen](https://github.com/user-attachments/assets/588eb1c3-23de-4760-b63d-56ff993860f5)
