@@ -10,7 +10,7 @@ import conf from "./conf/conf";
 registerTranslation('en', en)
 
 export default function App() {
-  if (!('localStorage' in window)) {
+  if (typeof window !== 'undefined' && !('localStorage' in window)) {
     window.localStorage = storage;
   }
   // removeSessionDuringDevlopment();
