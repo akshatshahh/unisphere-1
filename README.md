@@ -2,6 +2,26 @@
 My final year project created with appwrite and react-native.
 This is mobile application for the project's frontend.
 
+## Deploying to production (Android & iOS)
+
+To build and run the app on real devices:
+
+1. **Environment variables**  
+   Copy `.sample.env` to `.env` and fill in your values for local development. For EAS builds (Expo Application Services), set the same variables as **EAS Secrets** in the [Expo dashboard](https://expo.dev) (Project → Secrets). Required keys:
+   - All `EXPO_PUBLIC_APPWRITE_*` (endpoint, project ID, collection IDs, bucket, organizers team, function ID, etc.)
+   - `EXPO_PUBLIC_STRIPE_PUBLISHABLE_KEY`
+
+2. **Build**  
+   From the project root:
+   ```bash
+   npm install
+   eas build --platform all --profile production
+   ```
+   Use `--profile preview` for internal testing. Install the generated APK (Android) or IPA (iOS) on devices.
+
+3. **Submit to stores (optional)**  
+   After a production build: `eas submit --platform all --profile production`.
+
 ## Splash screen
 ![Splash_screen](https://github.com/user-attachments/assets/588eb1c3-23de-4760-b63d-56ff993860f5)
 
