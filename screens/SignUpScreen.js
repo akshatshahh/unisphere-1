@@ -63,17 +63,20 @@ function SignUpScreen({ navigation }) {
 
     const [hidePassword, setHidePassword] = useState(true);
     const [universityList, setUniversityList] = useState([]);
+    const [universitiesError, setUniversitiesError] = useState(null);
 
     useEffect(() => {
-        dbService.getUniversities().then((res) => {
-            const x = res.documents.map(({ name, $id, checkURL }) => ({ name, id: $id, checkURL }));
-            // console.log(x);
-
-            const filteredUniversities = x.filter(({ checkURL }) => checkURL !== null)
-            console.log(filteredUniversities);
-
-            setUniversityList(filteredUniversities);
-        });
+        dbService.getUniversities()
+            .then((res) => {
+                const list = res.documents.map(({ name, $id, checkURL }) => ({ name, id: $id, checkURL: checkURL ?? '' }));
+                setUniversityList(list);
+                setUniversitiesError(null);
+            })
+            .catch((err) => {
+                console.warn('Could not load universities:', err);
+                setUniversityList([]);
+                setUniversitiesError('Could not load universities. Check your connection and that .env is set.');
+            });
     }, []);
 
     const handleEye = () => {
@@ -83,12 +86,23 @@ function SignUpScreen({ navigation }) {
     const handleSignUP = async (signUpFormData) => {
 
         try {
-            const selectedUniversityURL = universityList.find(uni => uni.name === signUpFormData.signup_universityName).checkURL;
-            // const selectedUniversityURL = 'https://unisphere-nu.vercel.app/api/check';
-
-            const checkedStudent = await checkStudent(signUpFormData.signup_email, signUpFormData.signup_mobile, signUpFormData.signup_universityName, selectedUniversityURL);
-
-            if (!checkedStudent) return;
+            const selectedUni = universityList.find(uni => uni.name === signUpFormData.signup_universityName);
+            if (!selectedUni) {
+                Toast.show({ type: 'error', text1: 'Please select a university.' });
+                return;
+            }
+            let checkedStudent;
+            if (selectedUni.checkURL) {
+                checkedStudent = await checkStudent(signUpFormData.signup_email, signUpFormData.signup_mobile, signUpFormData.signup_universityName, selectedUni.checkURL);
+                if (!checkedStudent) return;
+            } else {
+                // No student-check API: use form data so you can sign up from scratch
+                checkedStudent = {
+                    name: signUpFormData.signup_email.split('@')[0] || 'Student',
+                    enrolment: 'N/A',
+                    contact: signUpFormData.signup_mobile || '',
+                };
+            }
 
             const session = await auth.createAccount({ name: checkedStudent.name, email: signUpFormData.signup_email, password: signUpFormData.signup_password });
 
@@ -100,7 +114,8 @@ function SignUpScreen({ navigation }) {
                     const student = await dbService.createStudent({ name: checkedStudent.name, email: signUpFormData.signup_email, university: signUpFormData.signup_universityName, roll: checkedStudent.enrolment, contact: checkedStudent.contact });
                     if (student) {
                         console.log('Sign-up screen --> session:', session);
-                        const creespondingId = universityList.find(uni => uni.name === signUpFormData.signup_universityName).id;
+                        const creespondingId = universityList.find(uni => uni.name === signUpFormData.signup_universityName)?.id;
+                        if (!creespondingId) return;
                         await auth.addUserPrefInfo(signUpFormData.signup_universityName, creespondingId, student.$id);
 
                         reset({
@@ -142,6 +157,11 @@ function SignUpScreen({ navigation }) {
                     <View className='h-screen space-y-4 items-center'>
                         <Image source={require('../assets/sign_up_image.png')} className='w-80 h-80' />
 
+                        {universitiesError && (
+                            <HelperText type="error" style={{ alignSelf: 'flex-start', marginLeft: '8.33%' }}>
+                                {universitiesError}
+                            </HelperText>
+                        )}
                         <Dropdown
                             name='signup_universityName'
                             label='Select University'

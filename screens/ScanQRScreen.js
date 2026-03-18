@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { CameraView, Camera } from "expo-camera/next";
+import { CameraView, useCameraPermissions } from "expo-camera";
 import { Appbar, Button, Divider, Text } from "react-native-paper";
 import { Alert, Dimensions, StyleSheet, View } from "react-native";
 import dbService from "../appwrite/db";
@@ -8,19 +8,12 @@ import dbService from "../appwrite/db";
 function ScanQRScreen({ route, navigation }) {
     const { event_name, $id } = route.params;
 
-    const [hasPermission, setHasPermission] = useState(null);
+    const [permission, requestPermission] = useCameraPermissions();
     const [scanned, setScanned] = useState(false);
 
     const [scanData, setScanData] = useState();
 
-    useEffect(() => {
-        const getCameraPermissions = async () => {
-            const { status } = await Camera.requestCameraPermissionsAsync();
-            setHasPermission(status === "granted");
-        };
-
-        getCameraPermissions();
-    }, []);
+    const hasPermission = permission?.granted ?? null;
 
     const handleBarCodeScanned = async ({ type, data }) => {
         setScanned(true);

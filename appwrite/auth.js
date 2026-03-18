@@ -75,7 +75,21 @@ export class AuthService {
         }
     }
 
-
+    /**
+     * Returns the session cookie string used by the Appwrite client for authenticated requests.
+     * Pass this to bucketService.uploadEventPoster() so storage uploads are authorized.
+     */
+    getCookieFallback() {
+        try {
+            if (typeof globalThis !== 'undefined' && globalThis.localStorage) {
+                return globalThis.localStorage.getItem('cookieFallback') || '';
+            }
+            if (typeof window !== 'undefined' && window.localStorage) {
+                return window.localStorage.getItem('cookieFallback') || '';
+            }
+        } catch (_) {}
+        return '';
+    }
 }
 
 const authService = new AuthService();

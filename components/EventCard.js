@@ -12,7 +12,7 @@ function EventCard({ stats = false, title, organizer, price, description, date, 
                 {(price !== 0) && <Title className=''><TextInput.Icon icon='currency-inr' /></Title>}
             </View>
 
-            <Card.Cover source={{ uri: imageUrl }} className='w-full object-contain' />
+            <Card.Cover source={imageUrl ? { uri: imageUrl } : require('../assets/upload_event_poster.jpg')} className='w-full object-contain' />
 
             <Card.Content className='space-y-3'>
                 <Text variant="titleLarge">{organizer}</Text>

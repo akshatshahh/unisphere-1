@@ -23,38 +23,47 @@ export class BucketService {
         }
     }
 
-    async uploadEventPoster(fileURI, fileType) {
+    /**
+     * Upload event poster. Must be called with getCookieFallback() so the request is authenticated.
+     * @param {string} fileURI - Local file URI (e.g. from ImagePicker)
+     * @param {string} fileType - MIME type (e.g. 'image/jpeg')
+     * @param {string} [cookieFallback] - Session cookie string from auth (e.g. from getCookieFallback()). Required for Storage create.
+     */
+    async uploadEventPoster(fileURI, fileType, cookieFallback) {
         try {
-            // Creating file type which is required by the multipart form data
             const file = {
                 uri: fileURI,
-                name: `File_${Date.now()}`,
-                type: fileType,
+                name: `File_${Date.now()}.${(fileType || 'image/jpeg').split('/')[1] || 'jpg'}`,
+                type: fileType || 'image/jpeg',
             };
-            
-            // Construct the multipart/form-data payload
             const formData = new FormData();
             formData.append('file', file);
             formData.append('fileId', ID.unique());
-            
+
+            const headers = {
+                'X-Appwrite-Project': conf.project_id,
+            };
+            if (cookieFallback) {
+                headers['X-Fallback-Cookies'] = cookieFallback;
+            }
+
             const response = await fetch(`${conf.endpoint}/storage/buckets/${conf.bucket_id}/files`, {
                 method: 'POST',
-                headers: {
-                    'X-Appwrite-Project': conf.project_id,
-                },
+                headers,
                 body: formData,
             });
-            
-            // Parse the JSON response
+
             const data = await response.json();
-            console.log('Upload response:', data);
-            
-            if (data) {
-                const posterURL = `${conf.endpoint}/storage/buckets/${conf.bucket_id}/files/${data.$id}/preview?project=${conf.project_id}`;
-                return posterURL
+            if (data.code >= 400) {
+                throw new Error(data.message || 'Upload failed');
             }
+            if (data?.$id) {
+                return `${conf.endpoint}/storage/buckets/${conf.bucket_id}/files/${data.$id}/preview?project=${conf.project_id}`;
+            }
+            return null;
         } catch (error) {
-            console.error('Error uploading image:', error);
+            console.error('BucketService::uploadEventPoster()::error', error);
+            throw error;
         }
     }
 

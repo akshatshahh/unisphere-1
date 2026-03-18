@@ -96,10 +96,10 @@ function OthersTab({ navigation }) {
                                     ?
                                     <OrganizerEventCard
                                         buttonLabel={isOrganizer ? 'Read More' : 'Book Now'}
-                                        imageUrl={item.poster.toString()}
+                                        imageUrl={item.poster != null ? String(item.poster) : ''}
                                         title={item.event_name}
                                         date={UTC2date(item.event_starts)}
-                                        organizer={item.organizer_name.university.name}
+                                        organizer={(item.organizer_name?.university?.name ?? item.organizer_name?.name ?? '—')}
                                         time={UTC2time(item.event_starts)}
                                         price={item.price}
                                         description={item.event_description}
@@ -107,10 +107,10 @@ function OthersTab({ navigation }) {
                                     :
                                     <EventCard
                                         buttonLabel={isOrganizer ? 'Read More' : 'Book Now'}
-                                        imageUrl={item.poster.toString()}
+                                        imageUrl={item.poster != null ? String(item.poster) : ''}
                                         title={item.event_name}
                                         date={UTC2date(item.event_starts)}
-                                        organizer={item.organizer_name.university.name}
+                                        organizer={(item.organizer_name?.university?.name ?? item.organizer_name?.name ?? '—')}
                                         time={UTC2time(item.event_starts)}
                                         price={item.price}
                                         description={item.event_description}

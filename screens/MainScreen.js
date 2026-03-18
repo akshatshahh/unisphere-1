@@ -1,5 +1,5 @@
 import { createMaterialBottomTabNavigator } from 'react-native-paper/react-navigation';
-import { TextInput } from 'react-native-paper'
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 // Bottom Tabs
 import HomeTab from "./tabs/HomeTab"
@@ -7,6 +7,8 @@ import MyEventsTab from "./tabs/MyEventsTab"
 import OthersTab from "./tabs/OthersTab"
 
 const Tab = createMaterialBottomTabNavigator();
+
+const iconSize = 24;
 
 export default function MainScreen() {
     return (
@@ -18,8 +20,8 @@ export default function MainScreen() {
                 component={HomeTab}
                 options={{
                     tabBarLabel: 'Home',
-                    tabBarIcon: ({ focused }) => (
-                        <TextInput.Icon icon={focused ? 'home' : 'home-outline'} />
+                    tabBarIcon: ({ focused, color }) => (
+                        <MaterialCommunityIcons name={focused ? 'home' : 'home-outline'} size={iconSize} color={color} />
                     ),
                 }}
             />
@@ -29,8 +31,8 @@ export default function MainScreen() {
                 component={MyEventsTab}
                 options={{
                     tabBarLabel: 'My Events',
-                    tabBarIcon: ({ focused }) => (
-                        <TextInput.Icon icon={focused ? 'ticket-confirmation' : 'ticket-confirmation-outline'} />
+                    tabBarIcon: ({ focused, color }) => (
+                        <MaterialCommunityIcons name={focused ? 'ticket-confirmation' : 'ticket-confirmation-outline'} size={iconSize} color={color} />
                     ),
                 }}
             />
@@ -40,8 +42,8 @@ export default function MainScreen() {
                 component={OthersTab}
                 options={{
                     tabBarLabel: 'Others',
-                    tabBarIcon: ({ focused }) => (
-                        <TextInput.Icon icon={focused ? 'compass' : 'compass-outline'} />
+                    tabBarIcon: ({ focused, color }) => (
+                        <MaterialCommunityIcons name={focused ? 'compass' : 'compass-outline'} size={iconSize} color={color} />
                     ),
                 }}
             />

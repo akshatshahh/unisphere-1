@@ -1,22 +1,15 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Text, View, StyleSheet, Button } from "react-native";
-import { CameraView, Camera } from "expo-camera/next";
+import { CameraView, useCameraPermissions } from "expo-camera";
 
 
 export default function Ticket() {
-  const [hasPermission, setHasPermission] = useState(null);
+  const [permission, requestPermission] = useCameraPermissions();
   const [scanned, setScanned] = useState(false);
 
   const [scanData, setScanData] = useState();
 
-  useEffect(() => {
-    const getCameraPermissions = async () => {
-      const { status } = await Camera.requestCameraPermissionsAsync();
-      setHasPermission(status === "granted");
-    };
-
-    getCameraPermissions();
-  }, []);
+  const hasPermission = permission?.granted ?? null;
 
   const handleBarCodeScanned = ({ type, data }) => {
     setScanned(true);

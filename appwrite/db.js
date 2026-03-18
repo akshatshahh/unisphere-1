@@ -153,22 +153,20 @@ export class DBService {
         */
 
         try {
-            return await this.databases.createDocument(conf.db_id, conf.event_collection_id, ID.unique(),
-                {
-                    poster: posterURL,
-                    price: eventData.price,
-                    event_name: eventData.event_name,
-                    event_description: eventData.event_description,
-                    scope: eventData.scope,
-                    registration_start: eventData.registration_start,
-                    registration_end: eventData.registration_end,
-                    event_ends: eventData.event_ends,
-                    organizer_name: eventData.organizer_name,
-                    event_starts: eventData.event_starts,
-                    university_id: eventData.university_id,
-                    venue: eventData.venue
-                }
-            );
+            const payload = {
+                poster: posterURL ?? null,
+                price: String(eventData.price ?? 0),
+                event_name: eventData.event_name,
+                event_description: eventData.event_description,
+                scope: eventData.scope,
+                registration_start: eventData.registration_start,
+                registration_end: eventData.registration_end,
+                event_ends: eventData.event_ends,
+                event_starts: eventData.event_starts,
+                university_id: eventData.university_id,
+                venue: eventData.venue
+            };
+            return await this.databases.createDocument(conf.db_id, conf.event_collection_id, ID.unique(), payload);
         } catch (error) {
             console.log("DBService::createEvent()::error", error.type);
             console.log(error);

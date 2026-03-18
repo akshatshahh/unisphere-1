@@ -38,7 +38,9 @@ function MyEventScreen({ navigation, route }) {
 
     const [statData, setStatData] = useState([]);
 
-    const { cardDetails: { $id, event_name, poster, price, venue, event_starts, event_ends, registration_start, registration_end, organizer_name: { name: organizer }, event_description } } = route.params;
+    const { cardDetails } = route.params;
+    const { $id, event_name, poster, price, venue, event_starts, event_ends, registration_start, registration_end, event_description } = cardDetails;
+    const organizer = cardDetails.organizer_name?.name ?? cardDetails.organizer_name?.university?.name ?? '—';
 
     const qrData = {
         student_id: docID,
@@ -85,7 +87,7 @@ function MyEventScreen({ navigation, route }) {
                 <View className='flex-1 p-3 '>
 
                     <View className='h-1/4 rounded-md shadow-md shadow-black ' >
-                        <Image source={{ uri: poster.toString() }} className='w-full rounded-md h-full object-cover' />
+                        <Image source={poster ? { uri: String(poster) } : require('../assets/upload_event_poster.jpg')} className='w-full rounded-md h-full object-cover' />
                     </View>
 
                     <View className='flex flex-row items-baseline justify-between mt-6 mb-2'>

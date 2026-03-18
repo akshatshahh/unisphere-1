@@ -48,10 +48,10 @@ function StudentMyEvents() {
                                     renderItem={({ item }) => (
                                         <EventCard
                                             buttonLabel='View'
-                                            imageUrl={item.poster.toString()}
+                                            imageUrl={item.poster != null ? String(item.poster) : ''}
                                             title={item.event_name}
                                             date={UTC2date(item.event_starts)}
-                                            organizer={item.scope === 'for_all' ? item.organizer_name.university.name : item.organizer_name.name}
+                                            organizer={item.scope === 'for_all' ? (item.organizer_name?.university?.name ?? item.organizer_name?.name) : item.organizer_name?.name ?? '—'}
                                             time={UTC2time(item.event_starts)}
                                             price={item.price}
                                             description={item.event_description}

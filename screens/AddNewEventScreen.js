@@ -12,8 +12,9 @@ import { useNavigation } from '@react-navigation/native';
 import InputBox from '../components/InputBox';
 import { EventSchema } from '../utils/formSchema';
 import useAppwrite from '../context/appwriteAuthContext';
-import dbService from "../appwrite/db"
-import bucketService from "../appwrite/bucket"
+import dbService from "../appwrite/db";
+import bucketService from "../appwrite/bucket";
+import auth from "../appwrite/auth";
 import Toast from 'react-native-toast-message';
 
 function ImageViewer({ selectedImage }) {
@@ -126,7 +127,7 @@ function AddNewEventScreen() {
     let posterURL = null;
 
     const formData = {
-      price: isSwitchOn ? parseInt(eventPrice) : 0,
+      price: isSwitchOn ? parseInt(eventPrice, 10) || 0 : 0,
       event_name: eventFormData.event_name,
       event_description: eventFormData.event_description,
       scope: value,
@@ -137,48 +138,51 @@ function AddNewEventScreen() {
       organizer_name: docID,
       venue: eventFormData.event_venue,
       university_id
-    }
+    };
+
+    const createEvent = async (posterUrl) => {
+      setFormSubmitting(true);
+      try {
+        const res = await dbService.createNewEvent(posterUrl, formData);
+        if (res) {
+          Toast.show({ type: 'success', text1: 'Event created!' });
+          formCleanUp();
+          nvigation.pop();
+        }
+      } catch (err) {
+        console.error('Create event error:', err);
+        let msg = err?.message || err?.toString?.() || 'Could not create event.';
+        if (msg.includes('organizer_name') || msg.includes('Unknown attribute')) {
+          msg = 'Add "organizer_name" in Appwrite: events collection → Relation to students (one). See APPWRITE_SETUP.md.';
+        }
+        Toast.show({ type: 'error', text1: 'Event failed', text2: msg });
+      } finally {
+        setFormSubmitting(false);
+      }
+    };
 
     if (selectedImage && selectedImageFile) {
       setFormSubmitting(true);
-
-      posterURL = await bucketService.uploadEventPoster(selectedImage, selectedImageFile.mimeType);
-      console.log(posterURL);
-      const res = await dbService.createNewEvent(posterURL, formData);
-
-      if (res) {
-        Toast.show({
-          type: 'success',
-          text1: 'Event Created!'
-        });
-        formCleanUp();
+      try {
+        const cookie = auth.getCookieFallback?.() ?? '';
+        posterURL = await bucketService.uploadEventPoster(selectedImage, selectedImageFile.mimeType || 'image/jpeg', cookie);
+        await createEvent(posterURL);
+      } catch (err) {
+        console.error('Upload poster error:', err);
+        const msg = err?.message || err?.toString?.() || 'Upload failed. Check Storage permissions and that you are logged in.';
+        Toast.show({ type: 'error', text1: 'Upload failed', text2: msg });
+        setFormSubmitting(false);
       }
-
     } else {
-      Alert.alert('No event poster!', 'You did not select any image. Therefore default event poster will be shown on this event. Do you want to create event?', [
-        {
-          text: 'Upload',
-          onPress: () => pickImageAsync(),
-          style: 'cancel',
-        },
-        {
-          text: 'Create',
-          onPress: async () => {
-            setFormSubmitting(true);
-
-            const res = await dbService.createNewEvent(posterURL, formData);
-            if (res) {
-              Toast.show({
-                type: 'success',
-                text1: 'Event Created!'
-              });
-              formCleanUp();
-            }
-          },
-        }
-      ]);
+      Alert.alert(
+        'No event poster',
+        'Create event without a poster image? You can add one later.',
+        [
+          { text: 'Choose image', onPress: () => pickImageAsync(), style: 'cancel' },
+          { text: 'Create without poster', onPress: () => createEvent(null) },
+        ]
+      );
     }
-
   }
 
   return (

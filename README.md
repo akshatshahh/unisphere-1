@@ -2,6 +2,16 @@
 My final year project created with appwrite and react-native.
 This is mobile application for the project's frontend.
 
+## Running in Expo Go on your iPhone
+
+The project uses **Expo SDK 54** so it matches the current Expo Go app (App Store). Make sure your iPhone and Mac are on the same Wi‑Fi, then:
+
+1. **Start the dev server** (if not already running):  
+   `npm start`
+2. **Open on iPhone:** Scan the QR code with your iPhone Camera app, then tap the banner to open in Expo Go.
+
+If you see an SDK version mismatch, ensure you’ve run `npm install` after pulling and that the Expo Go app is up to date.
+
 ## Deploying to production (Android & iOS)
 
 To build and run the app on real devices:

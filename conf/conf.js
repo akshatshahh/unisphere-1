@@ -1,18 +1,28 @@
 const conf = {
-    endpoint: String(process.env.EXPO_PUBLIC_APPWRITE_ENDPOINT),
-    project_id: String(process.env.EXPO_PUBLIC_APPWRITE_PROJECT_ID),
-    student_collection_id: String(process.env.EXPO_PUBLIC_APPWRITE_STUDENT_COLLECTION_ID),
-    university_collection_id: String(process.env.EXPO_PUBLIC_APPWRITE_UNIVERSITY_COLLECTION_ID),
-    event_collection_id: String(process.env.EXPO_PUBLIC_APPWRITE_EVENT_COLLECTION_ID),
-    db_id: String(process.env.EXPO_PUBLIC_APPWRITE_DB_ID),
-    bucket_id: String(process.env.EXPO_PUBLIC_APPWRITE_BUCKET_ID),
-    organizers_team_id: String(process.env.EXPO_PUBLIC_APPWRITE_ORGANIZERS_TEAM_ID),
-    function_id: String(process.env.EXPO_PUBLIC_APPWRITE_FUNCTION_ID),
-    event_attend_collection_id: String(process.env.EXPO_PUBLIC_APPWRITE_EVENT_ATTEND_COLLECTION_ID),
-    stripe_publishable_key: String(process.env.EXPO_PUBLIC_STRIPE_PUBLISHABLE_KEY),
-    txns_collection_id: String(process.env.EXPO_PUBLIC_APPWRITE_TRANSACTIONS_COLLECTION_ID),
-    announcements_collection_id: String(process.env.EXPO_PUBLIC_APPWRITE_ANNOUNCEMENTS_COLLECTION_ID),
-    
+    endpoint: String(process.env.EXPO_PUBLIC_APPWRITE_ENDPOINT ?? ''),
+    project_id: String(process.env.EXPO_PUBLIC_APPWRITE_PROJECT_ID ?? ''),
+    student_collection_id: String(process.env.EXPO_PUBLIC_APPWRITE_STUDENT_COLLECTION_ID ?? ''),
+    university_collection_id: String(process.env.EXPO_PUBLIC_APPWRITE_UNIVERSITY_COLLECTION_ID ?? ''),
+    event_collection_id: String(process.env.EXPO_PUBLIC_APPWRITE_EVENT_COLLECTION_ID ?? ''),
+    db_id: String(process.env.EXPO_PUBLIC_APPWRITE_DB_ID ?? ''),
+    bucket_id: String(process.env.EXPO_PUBLIC_APPWRITE_BUCKET_ID ?? ''),
+    organizers_team_id: String(process.env.EXPO_PUBLIC_APPWRITE_ORGANIZERS_TEAM_ID ?? ''),
+    function_id: String(process.env.EXPO_PUBLIC_APPWRITE_FUNCTION_ID ?? ''),
+    event_attend_collection_id: String(process.env.EXPO_PUBLIC_APPWRITE_EVENT_ATTEND_COLLECTION_ID ?? ''),
+    stripe_publishable_key: String(process.env.EXPO_PUBLIC_STRIPE_PUBLISHABLE_KEY ?? ''),
+    txns_collection_id: String(process.env.EXPO_PUBLIC_APPWRITE_TRANSACTIONS_COLLECTION_ID ?? ''),
+    announcements_collection_id: String(process.env.EXPO_PUBLIC_APPWRITE_ANNOUNCEMENTS_COLLECTION_ID ?? ''),
+};
+
+/** Returns true if required Appwrite config is set (so login/API work). */
+export function isConfigValid() {
+    return !!(
+        conf.endpoint &&
+        conf.project_id &&
+        conf.db_id &&
+        conf.student_collection_id &&
+        conf.university_collection_id
+    );
 }
 
 export default conf;

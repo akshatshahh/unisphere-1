@@ -8,7 +8,7 @@ function OrganizerEventCard({ stats = false, title, organizer, price, descriptio
     return (
         <View className='bg-purple-50 shadow-md shadow-black p-2 rounded-md flex flex-row space-x-2 h-56 w-11/12 mx-auto my-4'>
             <View className="w-36">
-                <Image source={{ uri: imageUrl }} className='w-full h-full rounded-md object-contain' />
+                <Image source={imageUrl ? { uri: imageUrl } : require('../assets/upload_event_poster.jpg')} className='w-full h-full rounded-md object-contain' />
             </View>
 
             <View className="flex justify-between flex-1">
